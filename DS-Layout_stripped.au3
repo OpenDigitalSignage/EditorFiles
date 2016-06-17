@@ -1306,12 +1306,13 @@ Opt("TrayMenuMode", 1 + 2 + 4)
 Opt("TrayIconHide", 1)
 Opt("TrayAutoPause", 0)
 Opt("WinTitleMatchMode", 2)
-Global Const $sAppName = "Layout Designer"
-Global Const $sTitle = " " & $sAppName
+Global Const $sTitle = " " & "Layout Designer"
 Global Const $sVersion = "0.3"
-Global Const $sIniFile = @ScriptDir & "\DS-Layout.ini"
+Global Const $sAppName = "DS-Layout"
+Global Const $sAppPath = @AppDataDir & "\" & $sAppName & "\"
+Global Const $sIniFile = @AppDataDir & "\" & $sAppName & "\" & $sAppName & ".ini"
 Global Const $iWindowStyle = BitOR($WS_EX_TOOLWINDOW, 0)
-Global $iOptionsRound = 0
+Global $iOptionsRound = 2
 Global $iOptionsGap = 10
 Global $sMyState = ""
 Global Const $aResolution[3][3] = [ ["800x450 (16:9)", 800, 450], ["800x500 (16:10)", 800, 500], ["800x600 (4:3)", 800, 600]]
@@ -1343,6 +1344,7 @@ Local $iLeft = IniRead($sIniFile, "Options", "Left", 100)
 $iOptionsRound = IniRead($sIniFile, "Options", "Round", $iOptionsRound)
 $iOptionsGap = IniRead($sIniFile, "Options", "Gap", $iOptionsGap)
 $hGUI = GUICreate($sTitle & " - ToolBox", 170, 12 + 50 * 9, $iTop, $iLeft, -1, BitOR($WS_EX_TOOLWINDOW, $WS_EX_APPWINDOW))
+DirCreate($sAppPath)
 _GDIPlus_Startup()
 $iToolBar = _GUICtrlToolbar_Create($hGUI, BitOR($BTNS_SHOWTEXT, $TBSTYLE_FLAT))
 _GUICtrlToolbar_AddBitmap($iToolBar, 1, -1, $IDB_STD_LARGE_COLOR)
@@ -1402,7 +1404,7 @@ _GUICtrlToolbar_EnableButton($iToolBar, $eTB_Save, True)
 EndFunc
 Func ToolBox_Exit()
 If $aLayouts[0][0] > 0 Then
-If MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), $sTitle, "Soll " & $sAppName & " geschlossen werden?") <> $IDYES Then Return
+If MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), $sTitle, "Soll " & $sTitle & " geschlossen werden?") <> $IDYES Then Return
 EndIf
 Local $aPos = WinGetPos($hGUI)
 IniWrite($sIniFile, "Options", "Top", $aPos[0])
@@ -1452,7 +1454,7 @@ Local $sFile
 If Not StringLen($pFileName) = 0 And FileExists($pFileName) Then
 $sFile = $pFileName
 Else
-$sFile = FileOpenDialog($sTitle & " - Layout öffnen", $sLastDirectory, "DS Layouts (*.dsbd)", $FD_FILEMUSTEXIST)
+$sFile = FileOpenDialog($sTitle & " - Layout öffnen", $sLastDirectory, "DSBD Layouts (*.dsbd)", $FD_FILEMUSTEXIST)
 If @error Then Return
 EndIf
 Local $iRes, $hWnd = -1
@@ -1501,7 +1503,7 @@ Next
 If $iLayout = -1 Then Return
 Local $sFile
 If $iForce = 0 Then
-$sFile = FileSaveDialog($sTitle & " - Layout speichern", $aLayouts[$iLayout][$eL_Path], "DS Layouts (*.dsbd)", 0, $aLayouts[$iLayout][$eL_File])
+$sFile = FileSaveDialog($sTitle & " - Layout speichern", $aLayouts[$iLayout][$eL_Path], "DSBD Layouts (*.dsbd)", 0, $aLayouts[$iLayout][$eL_File])
 If @error Then Return
 Else
 $aLayouts[$iLayout][$eL_Path] &= "\"

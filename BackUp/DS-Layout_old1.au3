@@ -74,7 +74,7 @@ Opt("WinTitleMatchMode", 2)
 ; Titel, Name und so weiter definieren...
 Global Const $sTitle = " " & "Layout Designer"
 Global Const $sVersion = "0.3"
-Global Const $sAppName = "DS-Layout"
+Global Const $sAppName = "DSLayout"
 Global Const $sAppPath = @AppDataDir & "\" & $sAppName & "\"
 Global Const $sIniFile = @AppDataDir & "\" & $sAppName & "\" & $sAppName & ".ini"
 
@@ -177,7 +177,6 @@ Func ToolBox_Init()
 	$iOptionsGap = IniRead($sIniFile, "Options", "Gap", $iOptionsGap)
 	$hGUI = GUICreate($sTitle & " - ToolBox", 170, 12 + 50 * 9, $iTop, $iLeft, -1, BitOR($WS_EX_TOOLWINDOW, $WS_EX_APPWINDOW))
 
-	DirCreate($sAppPath)
 	_GDIPlus_Startup()
 	$iToolBar = _GUICtrlToolbar_Create($hGUI, BitOR($BTNS_SHOWTEXT, $TBSTYLE_FLAT))
 	_GUICtrlToolbar_AddBitmap($iToolBar, 1, -1, $IDB_STD_LARGE_COLOR)
@@ -289,6 +288,7 @@ Func ToolBox_Exit()
 	IniWrite($sIniFile, "Options", "Left", $aPos[1])
 	IniWrite($sIniFile, "Options", "Round", $iOptionsRound)
 	IniWrite($sIniFile, "Options", "Gap", $iOptionsGap)
+	MsgBox(0,"iniwrite","writweww")
 	_GDIPlus_Shutdown()
 	Exit
 EndFunc   ;==>ToolBox_Exit
