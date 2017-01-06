@@ -2,17 +2,17 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=DS-Schedule.ico
 #AutoIt3Wrapper_Compression=4
-#AutoIt3Wrapper_Res_Comment=Homepage: http://www.mcmilk.de/projects/DS-Schedule/
+#AutoIt3Wrapper_Compile_Both=y
+#AutoIt3Wrapper_UseX64=y
+#AutoIt3Wrapper_Res_Comment=Homepage: https://open-digital-signage.org/
 #AutoIt3Wrapper_Res_Description=Digital Signage Background Daemon - Schedule
-#AutoIt3Wrapper_Res_Fileversion=0.4.0.0
-#AutoIt3Wrapper_Res_ProductVersion=0.4.0.0
-#AutoIt3Wrapper_Res_LegalCopyright=© 2016 Tino Reichardt
+#AutoIt3Wrapper_Res_Fileversion=1.0.0.0
+#AutoIt3Wrapper_Res_ProductVersion=1.0.0.0
+#AutoIt3Wrapper_Res_LegalCopyright=© 2016 - 2017 Tino Reichardt
 #AutoIt3Wrapper_Res_Language=1031
 #AutoIt3Wrapper_Res_Field=Productname|DS-Schedule
 #AutoIt3Wrapper_Res_Field=CompanyName|Tino Reichardt
 #AutoIt3Wrapper_Res_Field=Compile Date|%date% %time%
-#AutoIt3Wrapper_Run_After=mpress -q -r -s DS-Schedule.exe
-#AutoIt3Wrapper_Run_After=signtool sign /v /tr http://time.certum.pl/ /f DS-Schedule.p12 /p pass DS-Schedule.exe
 #AutoIt3Wrapper_Run_Tidy=y
 #AutoIt3Wrapper_Tidy_Stop_OnError=n
 #AutoIt3Wrapper_Run_Au3Stripper=y
@@ -20,7 +20,7 @@
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
 #cs
-	Copyright © 2016 Tino Reichardt
+	Copyright © 2016 - 2017 Tino Reichardt
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License Version 2, as
@@ -33,7 +33,7 @@
 #ce
 
 ; ctime: /TR 2016-08-05
-; mtime: /TR 2016-08-25
+; mtime: /TR 2017-01-06
 
 #include <Array.au3>
 #include <AutoItConstants.au3>
@@ -1644,7 +1644,7 @@ While 1
 	Switch $iMsg
 		Case $idButtonInfo
 			Local $sText = ""
-			$sText &= "Copyright 2016, Tino Reichardt" & @CRLF & @CRLF
+			$sText &= "Copyright Tino Reichardt" & @CRLF & @CRLF
 			$sText &= "Version: " & $sVersion & " (" & FileGetVersion(@ScriptFullPath) & ") " & @CRLF
 			MsgBox(BitOR($MB_OK, $MB_ICONINFORMATION), $sTitle, $sText)
 

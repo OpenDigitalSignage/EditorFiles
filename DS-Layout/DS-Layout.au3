@@ -4,27 +4,23 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_UseX64=y
-#AutoIt3Wrapper_Res_Comment=Homepage: http://www.mcmilk.de/projects/DS-Layout/
-#AutoIt3Wrapper_Res_Description=Layout Designer for Digital Signage Background Daemon
-#AutoIt3Wrapper_Res_Fileversion=0.3.0.0
-#AutoIt3Wrapper_Res_ProductVersion=0.3.0.0
-#AutoIt3Wrapper_Res_LegalCopyright=© 2015 - 2016 Tino Reichardt
+#AutoIt3Wrapper_Res_Comment=Homepage: https://www.open-digital-signage.org/
+#AutoIt3Wrapper_Res_Description=Digital Signage - Layout Designer
+#AutoIt3Wrapper_Res_Fileversion=1.0.0.0
+#AutoIt3Wrapper_Res_ProductVersion=1.0.0.0
+#AutoIt3Wrapper_Res_LegalCopyright=© 2015 - 2017 Tino Reichardt
 #AutoIt3Wrapper_Res_Language=1031
 #AutoIt3Wrapper_Res_Field=Productname|DS-Layout
 #AutoIt3Wrapper_Res_Field=CompanyName|Tino Reichardt
 #AutoIt3Wrapper_Res_Field=Compile Date|%date% %time%
 #AutoIt3Wrapper_Run_After=echo %fileversion% > prog.txt
-#AutoIt3Wrapper_Run_After=mpress -q -r -s DS-Layout.exe
-#AutoIt3Wrapper_Run_After=mpress -q -r -s DS-Layout_x64.exe
-#AutoIt3Wrapper_Run_After=signtool sign /v /tr http://time.certum.pl/ /f DS-Layout.p12 /p pass DS-Layout.exe
-#AutoIt3Wrapper_Run_After=signtool sign /v /tr http://time.certum.pl/ /f DS-Layout.p12 /p pass DS-Layout_x64.exe
 #AutoIt3Wrapper_Run_Tidy=y
 #AutoIt3Wrapper_Tidy_Stop_OnError=n
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
 #cs
-	Copyright © 2015 - 2016 Tino Reichardt
+	Copyright © 2015 - 2017 Tino Reichardt
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License Version 2, as
@@ -37,7 +33,7 @@
 #ce
 
 ; ctime: /TR 2015-08-14
-; mtime: /TR 2016-03-17
+; mtime: /TR 2017-01-06
 
 #include <Array.au3>
 #include <AutoItConstants.au3>
@@ -61,7 +57,6 @@
 #include <WinAPIShPath.au3>
 #include <GDIPlus.au3>
 
-#include "BinaryCall.au3"
 #include "DS-Layout_Icons.au3"
 #include "DS-Layout_Tools.au3"
 
@@ -73,7 +68,7 @@ Opt("WinTitleMatchMode", 2)
 
 ; Titel, Name und so weiter definieren...
 Global Const $sTitle = " " & "Layout Designer"
-Global Const $sVersion = "0.3"
+Global Const $sVersion = "1.0"
 Global Const $sAppName = "DS-Layout"
 Global Const $sAppPath = @AppDataDir & "\" & $sAppName & "\"
 Global Const $sIniFile = @AppDataDir & "\" & $sAppName & "\" & $sAppName & ".ini"
@@ -89,10 +84,13 @@ Global $sMyState = ""
 	16:10 -> 800 x 500  (1.6)
 	4:3   -> 800 x 600  (1.333)
 #ce
-Global Const $aResolution[3][3] = [ _
+Global Const $aResolution[6][3] = [ _
 		["800x450 (16:9)", 800, 450], _
 		["800x500 (16:10)", 800, 500], _
-		["800x600 (4:3)", 800, 600]]
+		["800x600 (4:3)", 800, 600], _
+		["450x800 (9:16)", 450, 800], _
+		["500x800 (10:16)", 500, 800], _
+		["600x800 (3:4)", 600, 800]]
 ;_ArrayDisplay($aResolution)
 
 ; ToolBox
@@ -115,7 +113,7 @@ Global Enum $eTB_New = 2000, $eTB_Open, $eTB_Save
 ; $eL_File        Datei des Layouts
 ; $eL_Path        Pfad zur Layout Datei
 ; $eL_State       M = Modified, U = Unchanged
-; $eL_Resolution  0(19:9) 1(16:10) 2(4:3) -> wie im Array $aResolution definiert
+; $eL_Resolution  0(19:9) 1(16:10) 2(4:3) 3(9:16) 4(10:16) 5(3:4) -> wie im Array $aResolution definiert
 Global $aLayouts[1][5] = [[0, 0, 0, 0, 0]]
 Global Enum $eL_Handle = 0, $eL_Path, $eL_File, $eL_State, $eL_Resolution
 Global $hLastLayout = 0
@@ -621,7 +619,7 @@ Func Layout_Create_Control($hLayout, $sType, $pName = -1, $pLeft = -1, $pTop = -
 			If $iHeight = -1 Then $iHeight = 187
 			$iColor = 0x99ccdd
 		Case "Ticker"
-			If $iWidth = -1 Then $iWidth = 784
+			If $iWidth = -1 Then $iWidth = 384
 			If $iHeight = -1 Then $iHeight = 40
 			$iColor = 0xff99cc
 		Case "Wetter"
@@ -1177,6 +1175,12 @@ Func Control_CheckUpdate($sUpdateTyp, $iPropCtrl, $iCtrl, $hLayout)
 				$iRes = 1
 			Case $aResolution[2][0]
 				$iRes = 2
+			Case $aResolution[3][0]
+				$iRes = 3
+			Case $aResolution[4][0]
+				$iRes = 4
+			Case $aResolution[5][0]
+				$iRes = 5
 		EndSwitch
 		$aLayouts[$iLayout][$eL_Resolution] = $iRes
 		Local $iX = $aResolution[$iRes][1]
@@ -1382,7 +1386,8 @@ Func Layout_Properties($hWnd)
 	Local $idComboBox, $sRes
 	GUICtrlCreateLabel("Auflösung:", 8, 11, 54, 17)
 	$idComboBox = GUICtrlCreateCombo("", 64, 8, 220, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL))
-	$sRes = $aResolution[0][0] & "|" & $aResolution[1][0] & "|" & $aResolution[2][0]
+	$sRes = $aResolution[0][0] & "|" & $aResolution[1][0] & "|" & $aResolution[2][0] & "|"
+	$sRes &= $aResolution[3][0] & "|" & $aResolution[4][0] & "|" & $aResolution[5][0]
 	GUICtrlSetData($idComboBox, $sRes, $aResolution[0][0])
 
 	; 0 = Funktion (X, Y, W, H, Name)
